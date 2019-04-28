@@ -1,11 +1,11 @@
 export const environment = {
   production: true,
   firebase: {
-    apiKey: "AIzaSyAwWXDBlwhZ-Wk1Qd7eI4CHVSMDre6Zy9k",
-    authDomain: "hmct-1f8e5.firebaseapp.com",
-    databaseURL: "https://hmct-1f8e5.firebaseio.com",
-    projectId: "hmct-1f8e5",
-    storageBucket: "hmct-1f8e5.appspot.com",
-    messagingSenderId: "426337746501",
+    apiKey: 'AIzaSyBfoxWV7lPegxHXyEUf4hr3n9I4XN8JjPA',
+    authDomain: 'hmct-web-prod.firebaseapp.com',
+    databaseURL: 'https://hmct-web-prod.firebaseio.com',
+    projectId: 'hmct-web-prod',
+    storageBucket: 'hmct-web-prod.appspot.com',
+    messagingSenderId: '33585053231',
   },
 };
