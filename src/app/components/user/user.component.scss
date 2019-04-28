@@ -1,0 +1,19 @@
+.user__status {
+    // background-color: #888;
+    height: 8px;
+    width: 8px;
+    margin-right: 8px;
+    border-radius: 4px;
+}
+
+.user__status--online {
+    // background-color: #0FA;
+}
+
+.user__image {
+    margin-right: 8px;
+}
+
+.user--offline {
+    opacity: 0.50;
+}

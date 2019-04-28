@@ -1,0 +1,7 @@
+<div class="user-list" *ngIf="users$ | async | userOrderBy : 'status' as users">
+  <div [@listStagger]="users.length">
+    <div *ngFor="let user of users" class="user-list__user">
+      <hmct-user [user]="user" fxFlex></hmct-user>
+    </div>
+  </div>
+</div>

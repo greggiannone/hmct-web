@@ -1,0 +1,60 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/theming';
+@import 'app/components/message/message.theme';
+@import 'app/components/user/user.theme';
+@import 'app/components/chat-form/chat-form.theme';
+@import 'app/components/settings/settings.theme';
+
+$custom-typography: mat-typography-config(
+  $font-family:   'Quicksand',
+);
+
+@include mat-core($custom-typography);
+
+@mixin custom-components-theme($theme) {
+  @include angular-material-theme($theme);
+  @include message-theme($theme);
+  @include user-theme($theme);
+  @include chat-form-theme($theme);
+  @include settings-theme($theme);
+}
+
+.light-deeppurple-amber {
+  $light-primary: mat-palette($mat-deep-purple);
+  $light-accent: mat-palette($mat-amber);
+  $light-warn: mat-palette($mat-red);
+  $light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+  @include custom-components-theme($light-theme);
+}
+
+.light-indigo-pink {
+  $light-primary: mat-palette($mat-indigo);
+  $light-accent: mat-palette($mat-pink);
+  $light-warn: mat-palette($mat-red);
+  $light-theme: mat-light-theme($light-primary, $light-accent, $light-warn);
+  @include custom-components-theme($light-theme);
+}
+
+.dark-purple-green {
+  $dark-primary: mat-palette($mat-purple);
+  $dark-accent: mat-palette($mat-green);
+  $dark-warn:    mat-palette($mat-red);
+  $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+  @include custom-components-theme($dark-theme);
+}
+
+.dark-pink-bluegrey {
+  $dark-primary: mat-palette($mat-pink);
+  $dark-accent: mat-palette($mat-blue-grey);
+  $dark-warn:    mat-palette($mat-red);
+  $dark-theme:   mat-dark-theme($dark-primary, $dark-accent, $dark-warn);
+  @include custom-components-theme($dark-theme);
+}
+
+  
+html,
+body {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}

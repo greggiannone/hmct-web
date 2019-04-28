@@ -1,0 +1,3 @@
+<div @listAnimation  *ngFor="let message of (messages$ | async); trackBy: trackElement">
+  <hmct-message class="feed-message" [message]="message"></hmct-message>
+</div>

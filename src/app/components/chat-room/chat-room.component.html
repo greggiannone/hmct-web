@@ -1,0 +1,15 @@
+
+<div  fxFlexFill fxLayout="row">
+
+  <div class="chat-room" fxFlex fxLayout="column">
+    
+    <div #feedScroll fxFlex class="chat-room__feed">
+      <hmct-feed></hmct-feed>
+    </div>
+
+    <hmct-chat-form class="chat-room__chat-form" (messageSent)="onMessageSent()"></hmct-chat-form>
+
+  </div>
+
+  <hmct-user-list></hmct-user-list>
+</div>

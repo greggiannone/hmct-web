@@ -1,0 +1,79 @@
+<div class="settings" fxFlexFill fxLayoutAlign="center center">
+  <form #settingsForm="ngForm">
+    <mat-card>
+
+      <mat-card-title>
+        <span class="mat-headline" fxLayout="row" fxLayoutAlign="center center">
+          <hmct-user-image class="settings__user-image" [imageUrl]="imageUrl"></hmct-user-image>
+          <span>{{ displayName }}</span>
+        </span>
+      </mat-card-title>
+
+      <mat-card-content>
+        <p>
+          <mat-form-field>
+            <mat-label>Theme</mat-label>
+            <mat-select name="theme" [(ngModel)]="themeClass">
+              <mat-option *ngFor="let theme of themes$ | async" [value]="theme.path">
+                {{ theme.title }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field>
+            <mat-label>Online Status</mat-label>
+            <mat-select name="status" [(ngModel)]="status">
+              <mat-option value="online">
+                <div fxLayout="row" fxLayoutAlign="start center">
+                  <div class="settings__status-indicator settings__status-indicator--available mat-elevation-z1"></div>
+                  <div>Available</div>
+                </div>
+              </mat-option>
+              <mat-option value="busy">
+                <div fxLayout="row" fxLayoutAlign="start center">
+                  <div class="settings__status-indicator settings__status-indicator--busy mat-elevation-z1"></div>
+                  <div>Busy</div>
+                </div>
+              </mat-option>
+              <mat-option value="offline">
+                <div fxLayout="row" fxLayoutAlign="start center">
+                  <div class="settings__status-indicator settings__status-indicator--offline mat-elevation-z1"></div>
+                  <div>Offline</div>
+                </div>
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </p>
+        <p>
+          <mat-form-field class="settings__display-name">
+            <input matInput name="displayName" [(ngModel)]="displayName" placeholder="Display Name" required />
+          </mat-form-field>
+        </p>
+        <p>
+          <p>
+            User Image
+          </p>
+          <div>
+            <input type="file" (change)="upload($event.target.files[0])" name="imageUrl" placeholder="User Image" />
+          </div>
+          <div>
+            <progress [value]="uploadProgress$ | async" max="100"></progress>
+          </div>
+
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button [routerLink]="['/chat']" type="reset">
+          Back
+        </button>
+        <button cdkFocusInitial type="submit" [disabled]="!settingsForm.dirty" mat-raised-button color="primary"
+          (click)="applyChanges()">
+          Apply
+        </button>
+      </mat-card-actions>
+
+    </mat-card>
+
+  </form>
+</div>

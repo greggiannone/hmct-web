@@ -1,0 +1,56 @@
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+
+@Component({
+  selector: 'hmct-login-form',
+  templateUrl: './login-form.component.html',
+  styleUrls: ['./login-form.component.scss']
+})
+export class LoginFormComponent implements OnInit, AfterViewInit {
+ 
+
+  @ViewChild('emailInput') emailInput: ElementRef;
+
+  email: string;
+  password: string;
+
+  constructor(
+    private afAuth: AngularFireAuth,
+    private auth: AuthService,
+    private router: Router,
+    private dialog: MatDialog) { }
+
+  ngOnInit() {
+    if (this.auth.authenticated) {
+      this.router.navigate(['chat']);
+    }
+  }
+
+  login(): void {
+    this.auth.login(this.email, this.password)
+    .then(() => {
+      this.router.navigate(['chat']);
+    })
+    .catch(error => {
+      this.dialog.open(ErrorDialogComponent, {
+        data: {
+          message: error,
+        }
+      });
+    });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.emailInput) {
+      // Use settimeout to not get any change detection errors
+      setTimeout(() => {
+        this.emailInput.nativeElement.focus();
+      });
+    }
+  }
+
+}

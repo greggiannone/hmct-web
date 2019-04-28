@@ -1,0 +1,66 @@
+import { Injectable } from '@angular/core';
+import { AngularFireList, AngularFireDatabase } from 'angularfire2/database';
+import { ChatMessage } from '../models/chat-message.model';
+import { Observable } from 'rxjs';
+import { AngularFireAuth } from 'angularfire2/auth';
+import { User } from '../models/user.model';
+import { AuthService } from './auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ChatService {
+
+  user: firebase.User;
+  extendedUser: User;
+  chatMessages: AngularFireList<ChatMessage>;
+  chatMessage: ChatMessage;
+  username: Observable<string>;
+
+  constructor(private db: AngularFireDatabase, private afAuth: AngularFireAuth, private auth: AuthService) {
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.user = user;
+        this.getUser().subscribe(u => this.extendedUser = u);
+      } else {
+        this.user = undefined;
+        this.extendedUser = undefined;
+      }
+    });
+  }
+
+  getUser() {
+    const userId = this.user.uid;
+    const path = `/users/${userId}`;
+    return this.db.object<User>(path).valueChanges();
+  }
+
+  sendMessage(message: string): Promise<any> {
+    if (!message || message.length === 0) {
+      return Promise.reject('Message cannot be empty');
+    }
+
+    if (!this.auth.currentFbUser) {
+      return Promise.reject('You are not authenticated');
+    }
+
+    if (this.auth.currentFbUser) {
+      this.chatMessages = this.getMessages$();
+      return this.chatMessages.push({
+        message,
+        uid: this.auth.currentFbUser.uid,
+        timestamp: new Date().toUTCString(),
+        username: this.extendedUser.displayName,
+      });
+    }
+  }
+
+  getMessages$(): AngularFireList<ChatMessage> {
+    return this.db.list<ChatMessage>('messages');
+  }
+
+  getUsers(): AngularFireList<User> {
+    const path = '/users';
+    return this.db.list<User>(path);
+  }
+}

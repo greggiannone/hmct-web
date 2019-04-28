@@ -1,0 +1,20 @@
+<div class="chat-form mat-elevation-z1" fxFlex
+  fxLayout="row"
+  fxLayoutAlign="center center">
+    
+    <mat-form-field class="chat-form__message" fxFlex color="accent">
+        <textarea matInput #messageTextArea
+          [(ngModel)]="message"
+          placeholder="Send Message"
+          (keydown)="handleSubmit($event)">
+        </textarea>
+    </mat-form-field>
+
+    <button class="chat-form__send"
+      [disabled]="message.length === 0"
+      mat-raised-button color="accent"
+      (click)="send()">
+      Send
+    </button>
+    
+</div>

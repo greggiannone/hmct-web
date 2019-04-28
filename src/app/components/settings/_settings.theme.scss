@@ -1,0 +1,19 @@
+@import '~@angular/material/theming';
+
+@mixin settings-theme($theme) {
+  $background: map-get($theme, background);
+  $warn: map-get($theme, warn);
+
+  .settings__status-indicator--offline {
+    background-color: mat-color($background, disabled-button);
+  } 
+
+  .settings__status-indicator--available {
+    background-color: lawngreen;
+  } 
+
+  .settings__status-indicator--busy {
+    background-color: mat-color($warn);
+  }
+
+}
