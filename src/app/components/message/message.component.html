@@ -5,8 +5,7 @@
     <hmct-user-image class="message__user-image" *ngIf="!(isOwnMessage$ | async)"
       [imageUrl]="(user$ | async)?.imageUrl"></hmct-user-image>
     <mat-card class="message__content" [class.message__content--self]="isOwnMessage$ | async">
-      <mat-card-content>
-        {{ message.message }}
+      <mat-card-content [innerHTML]="parseMessage(message.message)">
       </mat-card-content>
     </mat-card>
   </div>
