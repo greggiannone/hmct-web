@@ -5,13 +5,17 @@
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
 
+  .user {
+    background: mat-color($background, hover);
+  }
+
   .user__status {
     background-color: mat-color($background, disabled-button);
-  } 
+  }
 
   .user__status--online {
     background-color: lawngreen;
-  } 
+  }
 
   .user__status--busy {
     background-color: mat-color($warn);

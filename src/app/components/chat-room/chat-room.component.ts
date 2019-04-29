@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
+import { ScreenService } from 'src/app/services/screen.service';
+import { MatSidenav } from '@angular/material';
 
 @Component({
   selector: 'hmct-chat-room',
@@ -11,8 +13,10 @@ export class ChatRoomComponent implements OnInit {
   hasScrolledToBottom = false;
 
   @ViewChild('feedScroll') feedScroll: ElementRef;
+  @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-  constructor(private chat: ChatService) {
+  constructor(private chat: ChatService, public screen: ScreenService) {
+
     this.chat.getMessages$().subscribe(messages => {
       // First time that the page loads, transport to the bottom as fast as possible
       if (!this.hasScrolledToBottom) {
@@ -28,6 +32,8 @@ export class ChatRoomComponent implements OnInit {
         }
       }
     });
+
+    this.screen.openUserList.subscribe(() => this.sidenav.toggle());
   }
 
   ngOnInit(): void {

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormControl } from '@angular/forms';
 import { AngularFireStorage, AngularFireStorageReference, AngularFireUploadTask } from 'angularfire2/storage';
+import { UserImageComponent } from '../user-image/user-image.component';
 
 
 @Component({
@@ -17,6 +18,7 @@ export class SettingsComponent {
   private task: AngularFireUploadTask;
 
   @ViewChild('settingsForm') correctionForm!: FormControl;
+  @ViewChild('userImage') userImage?: UserImageComponent;
   themes$: Observable<HMCTTheme[]>;
 
   uploadProgress$: Observable<number>;
@@ -45,13 +47,15 @@ export class SettingsComponent {
     this.correctionForm.reset();
   }
 
-  upload(file: File) {
+  upload(file: File): void {
     const path = `profile_images/${this.uid}`;
     this.ref = this.storage.ref(path);
     this.task = this.ref.put(file);
-    this.ref.getDownloadURL().subscribe(url => {
-      this.auth.setUserImage(url);
-    });
     this.uploadProgress$ = this.task.percentageChanges();
+    this.task.then(() => {
+      if (this.userImage) {
+        this.userImage.refresh();
+      }
+    });
   }
 }

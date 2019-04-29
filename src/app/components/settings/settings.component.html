@@ -4,7 +4,7 @@
 
       <mat-card-title>
         <span class="mat-headline" fxLayout="row" fxLayoutAlign="center center">
-          <hmct-user-image class="settings__user-image" [imageUrl]="imageUrl"></hmct-user-image>
+          <hmct-user-image #userImage class="settings__user-image" [uid]="uid"></hmct-user-image>
           <span>{{ displayName }}</span>
         </span>
       </mat-card-title>

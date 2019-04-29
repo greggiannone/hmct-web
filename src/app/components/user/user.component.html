@@ -1,10 +1,10 @@
-<div class="user" [class.user--offline]="user.status === 'offline'">
-  <mat-card>
+<div  [class.user--offline]="user.status === 'offline'">
+  <mat-card class="user">
     <mat-card-content>
       <div fxLayout="row" fxLayoutAlign="start center">
         <div class="user__status mat-elevation-z1" [class.user__status--online]="user.status === 'online'"
           [class.user__status--busy]="user.status === 'busy'"></div>
-        <hmct-user-image class="user__image" [imageUrl]="user.imageUrl"></hmct-user-image>
+        <hmct-user-image class="user__image" [uid]="user.uid"></hmct-user-image>
         <div>{{ user.displayName }} </div>
       </div>
     </mat-card-content>

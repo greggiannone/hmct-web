@@ -1,8 +1,8 @@
 <mat-toolbar color="primary">
-  <button mat-button [routerLink]="['chat']">
-    <mat-icon>home</mat-icon>
-    <span>&nbsp;HMCT Web</span>
+  <button mat-icon-button *ngIf="screen.isMobile$ | async" (click)="screen.openUserList.emit()">
+    <mat-icon>menu</mat-icon>
   </button>
+  <span>HMCT Web</span>
   <span class="nav-bar__spacer"></span>
   <button *ngIf="!(auth.isAuthenticated$ | async)" mat-button [routerLink]="['login']">
     Login
@@ -11,8 +11,8 @@
     Sign Up
   </button>
   <button mat-icon-button *ngIf="auth.isAuthenticated$ | async" [matMenuTriggerFor]="menu">
-    <mat-icon>more_vert</mat-icon>
-  </button>
+      <mat-icon>more_vert</mat-icon>
+    </button>
   <mat-menu #menu="matMenu">
     <button mat-menu-item [routerLink]="['settings']">
         <mat-icon>settings</mat-icon>

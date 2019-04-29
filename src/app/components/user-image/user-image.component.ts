@@ -1,4 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { AngularFireStorage } from 'angularfire2/storage';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'hmct-user-image',
@@ -6,21 +9,36 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/cor
   styleUrls: ['./user-image.component.scss']
 })
 export class UserImageComponent implements OnInit, OnChanges {
-  private readonly defaultImageUrl =
-    'https://firebasestorage.googleapis.com/v0/b/hmct-1f8e5.appspot.com/o/profile_images%2Fuser.png?alt=media&token=76bce663-a328-4df0-8dbe-97a428cac8ce';
 
-  @Input() imageUrl = this.defaultImageUrl;
+  private defaultImage = '/assets/default-user.jpg';
 
-  constructor() { }
+  @Input() uid = '';
+
+  private imageUrlSubject = new BehaviorSubject<string>(this.defaultImage);
+
+  get imageUrl$(): Observable<string> {
+    return this.imageUrlSubject.asObservable();
+  }
+
+  constructor(private fbStorage: AngularFireStorage) { }
 
   ngOnInit() {
+    this.refresh();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.imageUrl) {
-      if (!this.imageUrl || this.imageUrl.length === 0) {
-        this.imageUrl = this.defaultImageUrl;
-      }
+    if (changes.uid) {
+      this.refresh();
+    }
+  }
+
+  refresh(): void {
+    if (this.uid) {
+      const path = `profile_images/${this.uid}`;
+      const ref = this.fbStorage.ref(path);
+      ref.getDownloadURL().pipe(catchError(error => of(this.defaultImage))).subscribe(url => {
+        this.imageUrlSubject.next(url);
+      });
     }
   }
 

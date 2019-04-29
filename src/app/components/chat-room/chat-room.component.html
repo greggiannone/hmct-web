@@ -1,20 +1,18 @@
-
-<div  fxFlexFill fxLayout="row">
-
-  <div class="chat-room" fxFlex fxLayout="column">
-
-    <div #feedScroll fxFlex class="chat-room__feed">
-      <hmct-feed></hmct-feed>
-    </div>
-
-    <hmct-chat-form class="chat-room__chat-form" (messageSent)="onMessageSent()"></hmct-chat-form>
-
-  </div>
-
-  <div class="chat-room__user-list" fxLayout="column">
-    <div fxFlex class="chat-room__user-scroll">
+<mat-sidenav-container autosize fxFill>
+  <mat-sidenav #sidenav
+    [mode]="(screen.isMobile$ | async ) ? 'over' : 'side'" opened
+    [opened]="!(screen.isMobile$ | async )">
       <hmct-user-list></hmct-user-list>
-    </div>
-  </div>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="chat-room" fxFlex fxLayout="column">
 
-</div>
+        <div #feedScroll fxFlex class="chat-room__feed">
+          <hmct-feed></hmct-feed>
+        </div>
+
+        <hmct-chat-form class="chat-room__chat-form" (messageSent)="onMessageSent()"></hmct-chat-form>
+
+      </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
