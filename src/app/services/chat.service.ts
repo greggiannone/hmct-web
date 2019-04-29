@@ -57,7 +57,7 @@ export class ChatService {
   }
 
   private getMessagesInternal$(): AngularFireList<ChatMessage> {
-    return this.db.list<ChatMessage>('messages', ref => ref.limitToLast(5));
+    return this.db.list<ChatMessage>('messages', ref => ref.limitToLast(100));
   }
 
   getMessages$(): Observable<ChatMessage[]> {
