@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
-import { Router } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
+import { ScreenService } from 'src/app/services/screen.service';
 
 @Component({
   selector: 'hmct-nav-bar',
@@ -10,7 +10,10 @@ import { ChatService } from 'src/app/services/chat.service';
 })
 export class NavBarComponent implements OnInit {
 
-  constructor(public auth: AuthService, private router: Router, public chat: ChatService) { }
+  constructor(
+    public auth: AuthService,
+    public chat: ChatService,
+    public screen: ScreenService) { }
 
   ngOnInit() {
   }

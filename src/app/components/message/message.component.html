@@ -1,21 +1,26 @@
 <div class="message" fxFlex fxLayout="column" [fxLayoutAlign]="(isOwnMessage$ | async) ? 'end end' : 'start start'"
   [class.message--self]="isOwnMessage$ | async">
 
-  <div fxLayout="row" fxLayoutAlign="start center">
+  <div fxLayout="row" fxLayoutAlign="start start">
     <hmct-user-image class="message__user-image" *ngIf="!(isOwnMessage$ | async)"
-      [imageUrl]="(user$ | async)?.imageUrl"></hmct-user-image>
-    <mat-card class="message__content" [class.message__content--self]="isOwnMessage$ | async">
-      <mat-card-content>
-        {{ message.message }}
-      </mat-card-content>
-    </mat-card>
+      [uid]="message.uid"></hmct-user-image>
+
+    <div fxLayout="column">
+      <mat-card class="message__content" [class.message__content--self]="isOwnMessage$ | async">
+        <mat-card-content>
+          {{ message.message }}
+        </mat-card-content>
+      </mat-card>
+
+      <div class="mat-caption" [fxLayoutAlign]="(isOwnMessage$ | async) ? 'end end' : 'start start'">
+        <span *ngIf="!(isOwnMessage$ | async)">
+          {{ message.username }} ·
+        </span>
+        <span>
+          {{ message.timestamp | date : 'h:mm a' }}
+        </span>
+      </div>
+    </div>
   </div>
-  <div class="mat-caption">
-    <span *ngIf="!(isOwnMessage$ | async)">
-      {{ message.username }} ·
-    </span>
-    <span>
-      {{ message.timestamp | date : 'EEEE h:mm a' }}
-    </span>
-  </div>
+
 </div>

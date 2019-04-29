@@ -130,16 +130,6 @@ export class AuthService {
       .catch(error => console.log(error));
   }
 
-  setUserImage(imageUrl: string): void {
-    const path = `users/${this.currentFbUserSubject.value.uid}`;
-    const data = {
-      imageUrl,
-    };
-
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
-  }
-
   setUserTheme(themeClass: string) {
     const path = `users/${this.currentFbUserSubject.value.uid}`;
     const data = {

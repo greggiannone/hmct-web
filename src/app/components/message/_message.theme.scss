@@ -5,8 +5,7 @@
   $accent: map-get($theme, accent);
 
   .message__content--self {
-    background: mat-color($accent);
-    color: mat-color($accent, default-contrast);
+    // For now no different background color for own messages
   }
 
 }
