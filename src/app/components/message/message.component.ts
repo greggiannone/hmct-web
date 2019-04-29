@@ -25,7 +25,7 @@ export class MessageComponent implements OnInit {
   }
 
   parseMessage(message: string){
-    return message.replace(/(https?:\/\/[^\s]+)/, "<a href=\"$1\">$1</a>");
+    return message.replace(/(https?:\/\/[^\s]+)/, '<a href=\"$1\" target=\"_blank\">$1</a>');
   }
 
 }

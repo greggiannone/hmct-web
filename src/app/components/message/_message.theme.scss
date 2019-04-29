@@ -1,11 +1,10 @@
 @import '~@angular/material/theming';
 
 @mixin message-theme($theme) {
-  $background: map-get($theme, background);
-  $accent: map-get($theme, accent);
+  $foreground: map-get($theme, foreground);
 
-  .message__content--self {
-    // For now no different background color for own messages
+  // Make sure links don't appear purple / any weird color
+  .message__content a {
+    color: mat-color($foreground, text);
   }
-
 }
