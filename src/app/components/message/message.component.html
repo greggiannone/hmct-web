@@ -7,9 +7,8 @@
 
     <div fxLayout="column">
       <mat-card class="message__content" [class.message__content--self]="isOwnMessage$ | async">
-        <mat-card-content>
-          {{ message.message }}
-        </mat-card-content>
+          <mat-card-content [innerHTML]="parseMessage(message.message)">
+          </mat-card-content>
       </mat-card>
 
       <div class="mat-caption" [fxLayoutAlign]="(isOwnMessage$ | async) ? 'end end' : 'start start'">
