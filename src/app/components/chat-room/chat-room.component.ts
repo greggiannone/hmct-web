@@ -13,13 +13,13 @@ export class ChatRoomComponent implements OnInit {
   @ViewChild('feedScroll') feedScroll: ElementRef;
 
   constructor(private chat: ChatService) {
-    this.chat.getMessages$().valueChanges().subscribe(messages => {
-
+    this.chat.getMessages$().subscribe(messages => {
       // First time that the page loads, transport to the bottom as fast as possible
       if (!this.hasScrolledToBottom) {
         this.scrollToBottom();
         this.hasScrolledToBottom = true;
       } else {
+        // If the user is near the bottom when a new message comes in, auto-scroll
         const bottomPercentage =
           (this.feedScroll.nativeElement.scrollTop + this.feedScroll.nativeElement.offsetHeight) /
           this.feedScroll.nativeElement.scrollHeight;

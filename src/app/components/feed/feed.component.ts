@@ -15,7 +15,7 @@ export class FeedComponent implements OnInit {
   messages$: Observable<ChatMessage[]>;
 
   constructor(public chat: ChatService) {
-    this.messages$ = chat.getMessages$().valueChanges();
+    this.messages$ = chat.getMessages$();
   }
 
   ngOnInit() {

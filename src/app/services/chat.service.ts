@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { User } from '../models/user.model';
 import { AuthService } from './auth.service';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,7 @@ export class ChatService {
     }
 
     if (this.auth.currentFbUser) {
-      this.chatMessages = this.getMessages$();
+      this.chatMessages = this.getMessagesInternal$();
       return this.chatMessages.push({
         message,
         uid: this.auth.currentFbUser.uid,
@@ -55,10 +56,16 @@ export class ChatService {
     }
   }
 
-  getMessages$(): AngularFireList<ChatMessage> {
-    return this.db.list<ChatMessage>('messages', ref => {
-      return ref.limitToLast(100);
-    } );
+  private getMessagesInternal$(): AngularFireList<ChatMessage> {
+    return this.db.list<ChatMessage>('messages', ref => ref.limitToLast(100));
+  }
+
+  getMessages$(): Observable<ChatMessage[]> {
+    return this.getMessagesInternal$().snapshotChanges().pipe(map(messages => {
+      return messages.map(m => {
+        return { $key: m.key, ...m.payload.val() };
+      });
+    }));
   }
 
   getUsers(): AngularFireList<User> {
