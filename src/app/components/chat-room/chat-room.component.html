@@ -2,7 +2,7 @@
 <div  fxFlexFill fxLayout="row">
 
   <div class="chat-room" fxFlex fxLayout="column">
-    
+
     <div #feedScroll fxFlex class="chat-room__feed">
       <hmct-feed></hmct-feed>
     </div>
@@ -11,5 +11,10 @@
 
   </div>
 
-  <hmct-user-list></hmct-user-list>
+  <div class="chat-room__user-list" fxLayout="column">
+    <div fxFlex class="chat-room__user-scroll">
+      <hmct-user-list></hmct-user-list>
+    </div>
+  </div>
+
 </div>

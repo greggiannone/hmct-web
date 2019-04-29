@@ -9,3 +9,13 @@
 .chat-room__chat-form {
   margin: 8px;
 }
+
+.chat-room__user-scroll {
+  overflow: auto;
+}
+
+@media only screen and (max-width: 800px) {
+  .chat-room__user-list {
+    display: none !important;
+  }
+}

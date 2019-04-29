@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireList, AngularFireDatabase } from 'angularfire2/database';
+import { AngularFireList, AngularFireDatabase, QueryFn } from 'angularfire2/database';
 import { ChatMessage } from '../models/chat-message.model';
 import { Observable } from 'rxjs';
 import { AngularFireAuth } from 'angularfire2/auth';
@@ -56,7 +56,9 @@ export class ChatService {
   }
 
   getMessages$(): AngularFireList<ChatMessage> {
-    return this.db.list<ChatMessage>('messages');
+    return this.db.list<ChatMessage>('messages', ref => {
+      return ref.limitToLast(100);
+    } );
   }
 
   getUsers(): AngularFireList<User> {
