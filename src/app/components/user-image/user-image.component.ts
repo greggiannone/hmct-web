@@ -10,7 +10,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class UserImageComponent implements OnInit, OnChanges {
 
-  private defaultImage = '/assets/default-user.jpg';
+  private defaultImage = 'assets/default-user.jpg';
 
   @Input() uid = '';
 
