@@ -1,9 +1,12 @@
-import { Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, HostListener } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild,
+  ElementRef, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
 import { MatDialog } from '@angular/material';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 import { Observable } from 'rxjs';
 import { AngularFireStorageReference, AngularFireUploadTask, AngularFireStorage } from 'angularfire2/storage';
+import { AuthService } from '../../services/auth.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'hmct-chat-form',
@@ -13,6 +16,7 @@ import { AngularFireStorageReference, AngularFireUploadTask, AngularFireStorage 
 export class ChatFormComponent implements OnInit, AfterViewInit {
 
   @ViewChild('messageTextArea') messageTextArea?: ElementRef;
+  @ViewChild('messageForm') messageForm?: FormControl;
   @Output() messageSent = new EventEmitter<void>();
 
   message = '';
@@ -20,14 +24,18 @@ export class ChatFormComponent implements OnInit, AfterViewInit {
   private ref: AngularFireStorageReference;
   private task: AngularFireUploadTask;
   uploadProgress$: Observable<number>;
+  private updateActivityTimer: any;
 
   constructor(
     private chat: ChatService,
+    private auth: AuthService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private storage: AngularFireStorage) { }
 
   ngOnInit() {
+    // On initial load update typing in case they were previously typing / re-loaded
+    this.updateTyping();
   }
 
   @HostListener('document:paste', ['$event'])
@@ -39,6 +47,16 @@ export class ChatFormComponent implements OnInit, AfterViewInit {
         this.upload(item.getAsFile());
       }
     }
+  }
+
+  private updateTyping(): void {
+    // Debounce the keyboard timer / only update once a second maximum
+    if (this.updateActivityTimer) {
+      clearTimeout(this.updateActivityTimer);
+    }
+    this.updateActivityTimer = setTimeout(() => {
+      this.auth.setUserTyping(!!this.message);
+    }, 250);
   }
 
   send(): void {
@@ -67,6 +85,12 @@ export class ChatFormComponent implements OnInit, AfterViewInit {
     if (this.messageTextArea) {
       this.messageTextArea.nativeElement.focus();
       this.cdr.detectChanges();
+    }
+
+    if (this.messageForm) {
+      this.messageForm.valueChanges.subscribe(val => {
+        this.updateTyping();
+      });
     }
   }
 

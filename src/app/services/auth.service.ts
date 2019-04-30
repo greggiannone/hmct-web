@@ -139,4 +139,17 @@ export class AuthService {
     this.db.object(path).update(data)
       .catch(error => console.log(error));
   }
+
+  setUserTyping(isTyping: boolean): void {
+    const lastActive = new Date().toUTCString();
+    const path = `users/${this.currentFbUserSubject.value.uid}`;
+    const data = {
+      lastActive,
+      lastMessageActivity: isTyping ? lastActive : '',
+    };
+
+    this.db.object(path).update(data)
+      .catch(error => console.log(error));
+  }
+
 }

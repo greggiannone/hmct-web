@@ -33,6 +33,7 @@ import { ThemeService } from './services/theme.service';
 import { UserOrderByPipe } from './pipes/user-order-by.pipe';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { UserImageComponent } from './components/user-image/user-image.component';
+import { FireImageComponent } from './components/fire-image/fire-image.component';
 
 @NgModule({
   declarations: [
@@ -50,6 +51,7 @@ import { UserImageComponent } from './components/user-image/user-image.component
     SettingsComponent,
     UserOrderByPipe,
     UserImageComponent,
+    FireImageComponent,
   ],
   imports: [
     BrowserModule,

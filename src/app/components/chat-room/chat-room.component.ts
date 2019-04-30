@@ -2,6 +2,9 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { ChatService } from 'src/app/services/chat.service';
 import { ScreenService } from 'src/app/services/screen.service';
 import { MatSidenav } from '@angular/material';
+import { AuthService } from '../../services/auth.service';
+import { Observable } from 'rxjs';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'hmct-chat-room',
@@ -13,10 +16,14 @@ export class ChatRoomComponent implements OnInit {
   hasScrolledToBottom = false;
   title = document.title;
 
+  users$: Observable<User[]>;
+
   @ViewChild('feedScroll') feedScroll: ElementRef;
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-  constructor(private chat: ChatService, public screen: ScreenService) {
+  constructor(private chat: ChatService, public screen: ScreenService, public auth: AuthService) {
+
+    this.users$ = chat.getUsers$();
 
     this.chat.getMessages$().subscribe(messages => {
       // First time that the page loads, transport to the bottom as fast as possible
@@ -45,17 +52,25 @@ export class ChatRoomComponent implements OnInit {
   }
 
   initialScrollToBottom(retryCount: number): void {
+    if (retryCount <= 0) {
+      return;
+    }
+
     this.feedScroll.nativeElement.scrollTo({
       top: this.feedScroll.nativeElement.scrollHeight,
     });
 
     // Because some messages take time to load, keep scrolling to bottom while they load
     setTimeout(() => {
-      this.initialScrollToBottom(retryCount--);
+      this.initialScrollToBottom(--retryCount);
     }, 500);
   }
 
   scrollToBottom(retryCount: number): void {
+    if (retryCount <= 0) {
+      return;
+    }
+
     setTimeout(() => {
       this.feedScroll.nativeElement.scrollTo({
         top: this.feedScroll.nativeElement.scrollHeight,
@@ -65,7 +80,7 @@ export class ChatRoomComponent implements OnInit {
 
     // Because some messages take time to load, keep scrolling to bottom while they load
     setTimeout(() => {
-      this.initialScrollToBottom(retryCount--);
+      this.initialScrollToBottom(--retryCount);
     }, 500);
   }
 

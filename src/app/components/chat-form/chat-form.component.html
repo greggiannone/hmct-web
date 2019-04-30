@@ -1,22 +1,24 @@
-<div class="chat-form" fxFlex fxLayout="row" fxLayoutAlign="center center">
+<form #messageForm="ngForm">
+  <div class="chat-form" fxFlex fxLayout="row" fxLayoutAlign="center center">
 
-  <!-- TODO: Hook this up to uploading image and paste firebase download url after upload is finished -->
-  <button mat-icon-button matTooltip="Send image" (click)="onSendImageClick()">
-    <mat-icon>image</mat-icon>
-  </button>
-
-  <input id="fileToUpload" type="file" style="display: none" (change)="upload($event.target.files[0])" >
-
-  <div class="chat-form__message mat-elevation-z1" fxFlex fxLayout="row" fxLayoutAlign="center center">
-    <mat-form-field class="chat-form__message" fxFlex color="accent">
-      <textarea matInput #messageTextArea [(ngModel)]="message" cdkTextareaAutosize cdkAutosizeMaxRows="7"
-        (keydown)="handleSubmit($event)">
-      </textarea>
-    </mat-form-field>
-
-    <button class="chat-form__send" [disabled]="message.length === 0" mat-icon-button color="accent" (click)="send()">
-      <mat-icon>send</mat-icon>
+    <!-- TODO: Hook this up to uploading image and paste firebase download url after upload is finished -->
+    <button mat-icon-button matTooltip="Send image" (click)="onSendImageClick()">
+      <mat-icon>image</mat-icon>
     </button>
-  </div>
 
-</div>
+    <input id="fileToUpload" type="file" style="display: none" (change)="upload($event.target.files[0])" >
+
+    <div class="chat-form__message mat-elevation-z1" fxFlex fxLayout="row" fxLayoutAlign="center center">
+      <mat-form-field class="chat-form__message" fxFlex color="accent" >
+        <textarea name="message" matInput #messageTextArea [(ngModel)]="message" cdkTextareaAutosize cdkAutosizeMaxRows="7"
+          (keydown)="handleSubmit($event)">
+        </textarea>
+      </mat-form-field>
+
+      <button class="chat-form__send" [disabled]="message.length === 0" mat-icon-button color="accent" (click)="send()">
+        <mat-icon>send</mat-icon>
+      </button>
+    </div>
+
+  </div>
+</form>

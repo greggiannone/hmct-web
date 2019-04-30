@@ -16,10 +16,14 @@ export class UserListComponent implements OnInit {
   users$: Observable<User[]>;
 
   constructor(private chat: ChatService) {
-    this.users$ = chat.getUsers().valueChanges();
+    this.users$ = chat.getUsers$();
   }
 
   ngOnInit() {
+  }
+
+  trackElement(index: number, element: User): string {
+    return element ? element.$key : '';
   }
 
 }

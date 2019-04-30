@@ -68,8 +68,12 @@ export class ChatService {
     }));
   }
 
-  getUsers(): AngularFireList<User> {
+  getUsers$(): Observable<User[]> {
     const path = '/users';
-    return this.db.list<User>(path);
+    return this.db.list<User>(path).snapshotChanges().pipe(map(users => {
+      return users.map(m => {
+        return { $key: m.key, ...m.payload.val() };
+      });
+    }));
   }
 }

@@ -4,6 +4,7 @@
   $background: map-get($theme, background);
   $accent: map-get($theme, accent);
   $warn: map-get($theme, warn);
+  $foreground: map-get($theme, foreground);
 
   .user {
     background: mat-color($background, hover);
@@ -19,5 +20,9 @@
 
   .user__status--busy {
     background-color: mat-color($warn);
+  }
+
+  .user__typing {
+    color: mat-color($foreground, disabled-text);
   }
 }
