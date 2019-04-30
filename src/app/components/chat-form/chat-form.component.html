@@ -1,9 +1,11 @@
 <div class="chat-form" fxFlex fxLayout="row" fxLayoutAlign="center center">
 
   <!-- TODO: Hook this up to uploading image and paste firebase download url after upload is finished -->
-  <button mat-icon-button matTooltip="Send image">
+  <button mat-icon-button matTooltip="Send image" (click)="onSendImageClick()">
     <mat-icon>image</mat-icon>
   </button>
+
+  <input id="fileToUpload" type="file" style="display: none" (change)="upload($event.target.files[0])" >
 
   <div class="chat-form__message mat-elevation-z1" fxFlex fxLayout="row" fxLayoutAlign="center center">
     <mat-form-field class="chat-form__message" fxFlex color="accent">

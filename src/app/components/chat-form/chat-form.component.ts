@@ -2,6 +2,8 @@ import { Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, Elem
 import { ChatService } from 'src/app/services/chat.service';
 import { MatDialog } from '@angular/material';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { Observable } from 'rxjs';
+import { AngularFireStorageReference, AngularFireUploadTask, AngularFireStorage } from 'angularfire2/storage';
 
 @Component({
   selector: 'hmct-chat-form',
@@ -15,7 +17,15 @@ export class ChatFormComponent implements OnInit, AfterViewInit {
 
   message = '';
 
-  constructor(private chat: ChatService, private dialog: MatDialog, private cdr: ChangeDetectorRef) { }
+  private ref: AngularFireStorageReference;
+  private task: AngularFireUploadTask;
+  uploadProgress$: Observable<number>;
+
+  constructor(
+    private chat: ChatService,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
+    private storage: AngularFireStorage) { }
 
   ngOnInit() {
   }
@@ -47,5 +57,23 @@ export class ChatFormComponent implements OnInit, AfterViewInit {
       this.messageTextArea.nativeElement.focus();
       this.cdr.detectChanges();
     }
+  }
+
+  onSendImageClick(): void {
+    document.getElementById('fileToUpload').click();
+  }
+
+  upload(file: File): void {
+    const id = Math.random().toString(36).substring(2, 9);
+    const path = `uploaded_images/${id}`;
+    this.ref = this.storage.ref(path);
+    this.task = this.ref.put(file);
+    this.uploadProgress$ = this.task.percentageChanges();
+    this.task.then(() => {
+      this.ref.getDownloadURL().subscribe(url => {
+        this.chat.sendMessage(url);
+        this.messageSent.emit();
+      });
+    });
   }
 }
