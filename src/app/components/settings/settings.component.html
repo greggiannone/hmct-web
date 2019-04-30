@@ -51,6 +51,11 @@
           </mat-form-field>
         </p>
         <p>
+            <mat-form-field class="settings__mood">
+              <textarea cdkTextareaAutosize cdkAutosizeMaxRows="7" matInput name="mood" [(ngModel)]="mood" placeholder="Mood" required maxlength="255"></textarea>
+            </mat-form-field>
+          </p>
+        <p>
           <p>
             User Image
           </p>

@@ -118,12 +118,13 @@ export class AuthService {
       .catch(error => console.log(error));
   }
 
-  setUserSettings(themeClass: string, displayName: string, status: string) {
+  setUserSettings(themeClass: string, displayName: string, status: string, mood: string) {
     const path = `users/${this.currentFbUserSubject.value.uid}`;
     const data = {
       themeClass,
       displayName,
       status,
+      mood,
     };
 
     this.db.object(path).update(data)

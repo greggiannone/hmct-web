@@ -6,7 +6,8 @@
           [class.user__status--busy]="user.status === 'busy'"></div>
         <hmct-user-image class="user__image" [uid]="user.uid"></hmct-user-image>
         <div>
-          <div>{{ user.displayName }}</div>
+          <div class="mat-body-strong">{{ user.displayName }}</div>
+          <div *ngIf="user.mood" class="user__mood mat-caption">{{ user.mood }}</div>
           <div *ngIf="user.lastMessageActivity" class="user__typing mat-caption" [matTooltip]="user.lastMessageActivity | date : 'medium'">Typing...</div>
         </div>
       </div>

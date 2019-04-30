@@ -28,6 +28,7 @@ export class SettingsComponent {
   status: string;
   imageUrl: string;
   uid: string;
+  mood: string;
 
   constructor(private theme: ThemeService, private auth: AuthService, private storage: AngularFireStorage) {
     this.themes$ = theme.themes$;
@@ -38,12 +39,13 @@ export class SettingsComponent {
         this.displayName = user.displayName;
         this.status = user.status;
         this.imageUrl = user.imageUrl;
+        this.mood = user.mood;
       }
     });
   }
 
   applyChanges(): void {
-    this.auth.setUserSettings(this.themeClass, this.displayName, this.status);
+    this.auth.setUserSettings(this.themeClass, this.displayName, this.status, this.mood);
     this.correctionForm.reset();
   }
 

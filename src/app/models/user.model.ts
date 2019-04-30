@@ -6,6 +6,7 @@ export class User {
   imageUrl: string;
   password: string;
   status: string;
+  mood: string;
   lastActive: string;
   lastMessageActivity: string;
   themeClass: string;
