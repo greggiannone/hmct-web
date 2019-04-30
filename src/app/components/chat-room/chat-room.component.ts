@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
 import { ScreenService } from 'src/app/services/screen.service';
 import { MatSidenav } from '@angular/material';
@@ -11,6 +11,8 @@ import { MatSidenav } from '@angular/material';
 export class ChatRoomComponent implements OnInit {
 
   hasScrolledToBottom = false;
+  newMessageCount = 0;
+  title = document.title;
 
   @ViewChild('feedScroll') feedScroll: ElementRef;
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
@@ -22,6 +24,7 @@ export class ChatRoomComponent implements OnInit {
       if (!this.hasScrolledToBottom) {
         this.scrollToBottom();
         this.hasScrolledToBottom = true;
+        this.resetTitle();
       } else {
         // If the user is near the bottom when a new message comes in, auto-scroll
         const bottomPercentage =
@@ -30,6 +33,9 @@ export class ChatRoomComponent implements OnInit {
         if (bottomPercentage > 0.9) {
           this.scrollToBottom();
         }
+      }
+      if(!document.hasFocus()){
+        this.updateTitleNewMessageCount();
       }
     });
 
@@ -51,4 +57,26 @@ export class ChatRoomComponent implements OnInit {
     this.scrollToBottom();
   }
 
+  @HostListener('window:focus', ['$event'])
+  onfocus(event: FocusEvent): void{
+    this.resetTitle();
+  }
+
+  updateTitleNewMessageCount(): void{
+    this.newMessageCount++;
+    var newTitle = '('+this.newMessageCount+')'+ this.title;
+    document.title = newTitle;
+  }
+
+  resetTitle(): void{
+    this.newMessageCount = 0;
+    var titlePieces = document.title.split(')');
+    //Don't want to try and access it if the title wasn't set to include a count.
+    if(titlePieces.length == 2){
+      document.title = titlePieces[1];
+    }
+    else{
+      document.title = this.title;
+    }
+  }
 }
