@@ -24,8 +24,34 @@ export class MessageComponent implements OnInit {
   ngOnInit() {
   }
 
-  parseMessage(message: string){
-    return message.replace(/(https?:\/\/[^\s]+)/, '<a href=\"$1\" target=\"_blank\">$1</a>');
+  parseMessage(message: string) {
+    const words = message.split(' ');
+    for (let i = 0; i < words.length; i++) {
+      words[i] = this.processWord(words[i]);
+    }
+    return words.join(' ');
+  }
+
+  processWord(word: string): string {
+
+    // Firebase uploaded images
+    if (/(https:\/\/firebasestorage.googleapis.com\/.+$)/.test(word)) {
+      return word.replace(/(https:\/\/firebasestorage.googleapis.com\/.+$)/,
+        '<a href=\"$1\" target=\"_blank\"><img src=\"$1\" class=\"message__image\"></a>');
+    }
+
+    // Regular image urls
+    if (/(https?:\/\/[^\s]+\.(?:jpg|gif|png))/.test(word)) {
+      return word.replace(/(https?:\/\/[^\s]+\.(?:jpg|gif|png))/,
+        '<a href=\"$1\" target=\"_blank\"><img src=\"$1\" class=\"message__image\"></a>');
+    }
+
+    // Links
+    if (/(https?:\/\/[^\s]+)/.test(word)) {
+      return word.replace(/(https?:\/\/[^\s]+)/, '<a href=\"$1\" target=\"_blank\">$1</a>');
+    }
+
+    return word;
   }
 
 }

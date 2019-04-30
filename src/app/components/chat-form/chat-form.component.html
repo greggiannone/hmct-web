@@ -1,20 +1,20 @@
-<div class="chat-form mat-elevation-z1" fxFlex
-  fxLayout="row"
-  fxLayoutAlign="center center">
-    
+<div class="chat-form" fxFlex fxLayout="row" fxLayoutAlign="center center">
+
+  <!-- TODO: Hook this up to uploading image and paste firebase download url after upload is finished -->
+  <button mat-icon-button matTooltip="Send image">
+    <mat-icon>image</mat-icon>
+  </button>
+
+  <div class="chat-form__message mat-elevation-z1" fxFlex fxLayout="row" fxLayoutAlign="center center">
     <mat-form-field class="chat-form__message" fxFlex color="accent">
-        <textarea matInput #messageTextArea
-          [(ngModel)]="message"
-          placeholder="Send Message"
-          (keydown)="handleSubmit($event)">
-        </textarea>
+      <textarea matInput #messageTextArea [(ngModel)]="message" cdkTextareaAutosize cdkAutosizeMaxRows="7"
+        (keydown)="handleSubmit($event)">
+      </textarea>
     </mat-form-field>
 
-    <button class="chat-form__send"
-      [disabled]="message.length === 0"
-      mat-raised-button color="accent"
-      (click)="send()">
-      Send
+    <button class="chat-form__send" [disabled]="message.length === 0" mat-icon-button color="accent" (click)="send()">
+      <mat-icon>send</mat-icon>
     </button>
-    
+  </div>
+
 </div>

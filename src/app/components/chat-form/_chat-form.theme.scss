@@ -4,7 +4,7 @@
   $background: map-get($theme, background);
   $accent: map-get($theme, accent);
 
-  .chat-form {
+  .chat-form__message {
     background-color: mat-color($background, dialog);
   }
 

@@ -7,4 +7,9 @@
   .message__content a {
     color: mat-color($foreground, text);
   }
+
+  .message__image {
+    max-height: 300px;
+    max-width: 300px;
+  }
 }
