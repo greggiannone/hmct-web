@@ -45,8 +45,10 @@ export class SettingsComponent {
   }
 
   applyChanges(): void {
-    this.auth.setUserSettings(this.themeClass, this.displayName, this.status, this.mood);
-    this.correctionForm.reset();
+    if (this.correctionForm.valid) {
+      this.auth.setUserSettings(this.themeClass, this.displayName, this.status, this.mood);
+      this.correctionForm.reset();
+    }
   }
 
   upload(file: File): void {

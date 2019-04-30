@@ -120,6 +120,9 @@ export class AuthService {
 
   setUserSettings(themeClass: string, displayName: string, status: string, mood: string) {
     const path = `users/${this.currentFbUserSubject.value.uid}`;
+    if (!mood) {
+      mood = '';
+    }
     const data = {
       themeClass,
       displayName,
