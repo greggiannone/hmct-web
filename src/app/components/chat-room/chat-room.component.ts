@@ -21,7 +21,7 @@ export class ChatRoomComponent implements OnInit {
     this.chat.getMessages$().subscribe(messages => {
       // First time that the page loads, transport to the bottom as fast as possible
       if (!this.hasScrolledToBottom) {
-        this.scrollToBottom();
+        this.initialScrollToBottom(5);
         this.hasScrolledToBottom = true;
         this.resetTitle();
       } else {
@@ -30,10 +30,10 @@ export class ChatRoomComponent implements OnInit {
           (this.feedScroll.nativeElement.scrollTop + this.feedScroll.nativeElement.offsetHeight) /
           this.feedScroll.nativeElement.scrollHeight;
         if (bottomPercentage > 0.9) {
-          this.scrollToBottom();
+          this.scrollToBottom(5);
         }
       }
-      if(!document.hasFocus()){
+      if (!document.hasFocus()) {
         this.updateTitleNewMessageCount();
       }
     });
@@ -44,29 +44,45 @@ export class ChatRoomComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  scrollToBottom(): void {
+  initialScrollToBottom(retryCount: number): void {
+    this.feedScroll.nativeElement.scrollTo({
+      top: this.feedScroll.nativeElement.scrollHeight,
+    });
+
+    // Because some messages take time to load, keep scrolling to bottom while they load
+    setTimeout(() => {
+      this.initialScrollToBottom(retryCount--);
+    }, 500);
+  }
+
+  scrollToBottom(retryCount: number): void {
     setTimeout(() => {
       this.feedScroll.nativeElement.scrollTo({
         top: this.feedScroll.nativeElement.scrollHeight,
+        behavior: 'smooth',
       });
     }, 0);
+
+    // Because some messages take time to load, keep scrolling to bottom while they load
+    setTimeout(() => {
+      this.initialScrollToBottom(retryCount--);
+    }, 500);
   }
 
   onMessageSent(): void {
-    this.scrollToBottom();
+    this.scrollToBottom(5);
   }
 
   @HostListener('window:focus', ['$event'])
-  onfocus(event: FocusEvent): void{
+  onfocus(event: FocusEvent): void {
     this.resetTitle();
   }
 
-  updateTitleNewMessageCount(): void{
-    var newTitle = '*' + this.title + '*';
-    document.title = newTitle;
+  updateTitleNewMessageCount(): void {
+    document.title = `* ${this.title} *`;
   }
 
-  resetTitle(): void{
+  resetTitle(): void {
     document.title = this.title;
   }
 }

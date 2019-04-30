@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
 import { MatDialog } from '@angular/material';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
@@ -28,6 +28,17 @@ export class ChatFormComponent implements OnInit, AfterViewInit {
     private storage: AngularFireStorage) { }
 
   ngOnInit() {
+  }
+
+  @HostListener('document:paste', ['$event'])
+  onPaste(event: ClipboardEvent): void {
+    const items = (event.clipboardData).items;
+    if (items && items.length > 0) {
+      const item = items[0];
+      if (item.kind === 'file') {
+        this.upload(item.getAsFile());
+      }
+    }
   }
 
   send(): void {

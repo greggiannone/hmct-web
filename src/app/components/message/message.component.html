@@ -6,14 +6,15 @@
       [uid]="message.uid"></hmct-user-image>
 
     <div fxLayout="column">
-      <mat-card class="message__content" [class.message__content--self]="isOwnMessage$ | async">
-          <mat-card-content [innerHTML]="parseMessage(message.message)">
-          </mat-card-content>
+      <mat-card class="message__content"
+        [class.message__content--self]="isOwnMessage$ | async">
+        <mat-card-content [innerHTML]="parseMessage(message.message)">
+        </mat-card-content>
       </mat-card>
 
       <div class="mat-caption" [fxLayoutAlign]="(isOwnMessage$ | async) ? 'end end' : 'start start'">
         <span *ngIf="!(isOwnMessage$ | async)">
-          {{ message.username }} ·
+          {{ message.username }}&nbsp;·&nbsp;
         </span>
         <span>
           {{ message.timestamp | date : 'h:mm a' }}
@@ -21,5 +22,4 @@
       </div>
     </div>
   </div>
-
 </div>
