@@ -11,7 +11,6 @@ import { MatSidenav } from '@angular/material';
 export class ChatRoomComponent implements OnInit {
 
   hasScrolledToBottom = false;
-  newMessageCount = 0;
   title = document.title;
 
   @ViewChild('feedScroll') feedScroll: ElementRef;
@@ -63,20 +62,11 @@ export class ChatRoomComponent implements OnInit {
   }
 
   updateTitleNewMessageCount(): void{
-    this.newMessageCount++;
-    var newTitle = '('+this.newMessageCount+')'+ this.title;
+    var newTitle = '*' + this.title + '*';
     document.title = newTitle;
   }
 
   resetTitle(): void{
-    this.newMessageCount = 0;
-    var titlePieces = document.title.split(')');
-    //Don't want to try and access it if the title wasn't set to include a count.
-    if(titlePieces.length == 2){
-      document.title = titlePieces[1];
-    }
-    else{
-      document.title = this.title;
-    }
+    document.title = this.title;
   }
 }
