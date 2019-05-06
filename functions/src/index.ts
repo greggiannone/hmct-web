@@ -12,7 +12,8 @@ const ACTIVITY_TIMEOUT = (60 * 1000) * 15 // 15 minutes
 // users to 'offline' if they are inactive for more than 8 hours.
 //const LOGIN_TIMEOUT = ((60 * 1000) * 60) * 8 // 8 Hours. 
 
-exports.updateUserStatus = functions.database.instance('hmct-1f8e5').ref('/users/{pathId}').onWrite(checkUserActivity);
+exports.updateUserStatusDBTrigger = functions.database.instance('hmct-1f8e5').ref('/users/{pathId}').onWrite(checkUserActivity);
+//exports.updateUserStatusTimerTrigger = functions.pubsub.schedule('every minute').onRun(checkUserActivity);
 
 async function checkUserActivity(change){
     const ref = change.after.ref.parent; // reference to the parent
