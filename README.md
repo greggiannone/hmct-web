@@ -35,5 +35,7 @@ Currently there are two projects that can be used:
 hmct-web-prod**
 
 You can switch between these with the following command:
-
 `firebase use [name]` (ex: `firebase use hmct-web-dev`)
+
+Once you make your changes, you can deploy these changes to the currently selected project with the following command:
+`firebase deploy`
