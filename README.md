@@ -31,6 +31,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 Used to deploy database rules, storage rules, and function commands. Be sure to install the Firebase tools npm package: `npm install -g firebase-tools`
 
 Currently there are two projects that can be used:
+
 **hmct-web-dev
 hmct-web-prod**
 
