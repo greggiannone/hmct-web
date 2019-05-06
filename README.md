@@ -28,14 +28,16 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Firebase CLI
 
-Used to deploy database rules, storage rules, and function commands
+Used to deploy database rules, storage rules, and function commands. Be sure to install the Firebase tools npm package: `npm install -g firebase-tools`
 
 Currently there are two projects that can be used:
 **hmct-web-dev
 hmct-web-prod**
 
 You can switch between these with the following command:
+
 `firebase use [name]` (ex: `firebase use hmct-web-dev`)
 
 Once you make your changes, you can deploy these changes to the currently selected project with the following command:
+
 `firebase deploy`
