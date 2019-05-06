@@ -35,6 +35,7 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 import { UserImageComponent } from './components/user-image/user-image.component';
 import { FireImageComponent } from './components/fire-image/fire-image.component';
 import { ForgotPasswordDialogComponent } from './components/forgot-password-dialog/forgot-password-dialog.component';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { ForgotPasswordDialogComponent } from './components/forgot-password-dial
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    HttpClientModule,
     AppRoutingModule,
     MatCheckboxModule,
     MatToolbarModule,

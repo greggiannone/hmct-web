@@ -26,6 +26,13 @@
             </mat-form-field>
           </p>
 
+          <div fxLayoutAlign="center center">
+            <button mat-raised-button class="login__google" (click)="signInWithGoogle()">
+              <mat-icon svgIcon="google-search" style="margin-right: 8px;"></mat-icon>
+              <span>Sign in with Google</span>
+            </button>
+          </div>
+
         </mat-card-content>
         <mat-card-actions align="end">
           <button mat-button (click)="forgotPassword()">Forgot Password?</button>

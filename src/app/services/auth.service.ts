@@ -5,12 +5,17 @@ import { map } from 'rxjs/operators';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
 import { User } from '../models/user.model';
+import * as firebase from 'firebase';
+import { AngularFireUploadTask, AngularFireStorageReference, AngularFireStorage } from 'angularfire2/storage';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  private ref: AngularFireStorageReference;
+  private task: AngularFireUploadTask;
   private currentUserSubject = new BehaviorSubject<User | undefined>(undefined);
   private currentFbUserSubject = new BehaviorSubject<firebase.User | undefined>(undefined);
   private authState: any;
@@ -48,6 +53,8 @@ export class AuthService {
   constructor(
     private afAuth: AngularFireAuth,
     private db: AngularFireDatabase,
+    private storage: AngularFireStorage,
+    private httpClient: HttpClient,
     private router: Router) {
 
     this.isAuthenticated$ = afAuth.user.pipe(map(user => {
@@ -95,17 +102,39 @@ export class AuthService {
       });
   }
 
+  signInWithGoogle(): Promise<void> {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    return this.afAuth.auth.signInWithPopup(provider)
+      .then((credential) => {
+        this.authState = credential.user;
+        const status = 'online';
+        return this.uploadGoogleUrl(credential.user.photoURL).then(() => {
+          this.setUserData(credential.user.email, credential.user.displayName, status);
+        });
+      });
+  }
+
+  uploadGoogleUrl(imageUrl: string): Promise<any> {
+    return this.httpClient.get(imageUrl, { responseType: 'blob'}).toPromise().then(response => {
+      const blob = new Blob([response]);
+      const path = `profile_images/${this.currentUserId}`;
+      this.ref = this.storage.ref(path);
+      return this.ref.put(blob);
+    });
+  }
+
   sendPasswordResetEmail(email: string): Promise<void> {
     return this.afAuth.auth.sendPasswordResetEmail(email);
   }
 
-  setUserData(email: string, displayName: string, status: string) {
+  setUserData(email: string, displayName: string, status: string, imageUrl = '') {
     const path = `users/${this.currentUserId}`;
     const data = {
       uid: this.currentUserId,
       email,
       displayName,
       status,
+      imageUrl,
     };
 
     this.db.object(path).update(data)

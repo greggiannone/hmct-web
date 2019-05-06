@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, NgZone } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
@@ -23,6 +23,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   constructor(
     private afAuth: AngularFireAuth,
     private auth: AuthService,
+    private ngZone: NgZone,
     private router: Router,
     private dialog: MatDialog) { }
 
@@ -57,6 +58,24 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
   forgotPassword(): void {
     this.dialog.open(ForgotPasswordDialogComponent);
+  }
+
+  signInWithGoogle(): void {
+    this.auth.signInWithGoogle()
+    .then(() => {
+      this.ngZone.run(() => {
+        this.router.navigate(['chat']);
+      });
+    })
+    .catch(error => {
+      this.ngZone.run(e => {
+        this.dialog.open(ErrorDialogComponent, {
+          data: {
+            message: e,
+          }
+        });
+      });
+    });
   }
 
 }

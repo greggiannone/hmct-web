@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/cor
 import { AngularFireStorage } from 'angularfire2/storage';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'hmct-user-image',
@@ -20,7 +21,7 @@ export class UserImageComponent implements OnInit, OnChanges {
     return this.imageUrlSubject.asObservable();
   }
 
-  constructor(private fbStorage: AngularFireStorage) { }
+  constructor(private fbStorage: AngularFireStorage, private chat: ChatService) { }
 
   ngOnInit() {
     this.refresh();
