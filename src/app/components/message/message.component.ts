@@ -16,7 +16,7 @@ export class MessageComponent implements OnInit {
 
   constructor(auth: AuthService) {
 
-    this.isOwnMessage$ = auth.currentFbUser$.pipe(map(user => {
+    this.isOwnMessage$ = auth.currentFirebaseUser$.pipe(map(user => {
       return user && user.uid === this.message.uid;
     }));
   }

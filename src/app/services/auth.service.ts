@@ -1,54 +1,34 @@
 import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from 'angularfire2/database';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { map, flatMap } from 'rxjs/operators';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
 import { User } from '../models/user.model';
-import * as firebase from 'firebase';
-import { AngularFireUploadTask, AngularFireStorageReference, AngularFireStorage } from 'angularfire2/storage';
+import { AngularFireStorageReference, AngularFireStorage } from 'angularfire2/storage';
 import { HttpClient } from '@angular/common/http';
+import { auth } from 'firebase/app';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
+  private uid: string;
+
+  get currentUid(): string {
+    return this.uid;
+  }
+
   private ref: AngularFireStorageReference;
-  private task: AngularFireUploadTask;
-  private currentUserSubject = new BehaviorSubject<User | undefined>(undefined);
-  private currentFbUserSubject = new BehaviorSubject<firebase.User | undefined>(undefined);
-  private authState: any;
-  get currentUserId(): string {
-    if (this.authState) {
-      return this.authState.uid;
-    }
-    return '';
+  private loginStatusSubject = new BehaviorSubject<'loggedOut' | 'loggingIn' | 'loggedIn'>('loggedOut');
+
+  get loginStatus$(): Observable<'loggedOut' | 'loggingIn' | 'loggedIn'> {
+    return this.loginStatusSubject.asObservable();
   }
 
-  currentUserid$: Observable<string>;
-
-  get authenticated(): boolean {
-    return this.authState !== null;
-  }
-
-  get currentUser(): User {
-    return this.currentUserSubject.value;
-  }
-
-  get currentUser$(): Observable<User> {
-    return this.currentUserSubject.asObservable();
-  }
-
-  get currentFbUser$(): Observable<firebase.User> {
-    return this.currentFbUserSubject.asObservable();
-  }
-
-  get currentFbUser(): firebase.User {
-    return this.currentFbUserSubject.value;
-  }
-
-  isAuthenticated$: Observable<boolean>;
+  currentUser$: Observable<User>;
+  currentFirebaseUser$: Observable<firebase.User>;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -57,34 +37,45 @@ export class AuthService {
     private httpClient: HttpClient,
     private router: Router) {
 
-    this.isAuthenticated$ = afAuth.user.pipe(map(user => {
-      if (user) {
-        return true;
+    this.currentUser$ = afAuth.user.pipe(flatMap(fbUser => {
+      if (fbUser) {
+        const path = `/users/${fbUser.uid}`;
+        return this.db.object<User>(path).valueChanges().pipe(map(user => {
+          // If there is no display name, this is probably a google user's first time logging in.
+          // When that happens, do everything we need to do for first time google users
+          if (!user.displayName) {
+            this.setGoogleAttributes(fbUser);
+          }
+          return user;
+        }));
+      } else {
+        return of(undefined);
       }
-      return false;
     }));
 
-    afAuth.user.subscribe(user => {
-      this.currentFbUserSubject.next(user);
-      if (user) {
-        const path = `/users/${user.uid}`;
-        this.db.object<User>(path).valueChanges().subscribe(u => {
-          this.currentUserSubject.next(u);
-        });
+    this.currentFirebaseUser$ = afAuth.user;
 
+    this.currentFirebaseUser$.subscribe(fbUser => {
+      if (fbUser) {
+        this.uid = fbUser.uid;
+        const status = 'online';
+        this.setUserStatus(status).then(() => {
+          this.loginStatusSubject.next('loggedIn');
+          this.router.navigate(['chat']);
+        });
       } else {
-        this.currentUserSubject.next(undefined);
+        this.uid = '';
+        this.loginStatusSubject.next('loggedOut');
         this.router.navigate(['login']);
       }
     });
   }
 
   login(email: string, password: string): Promise<any> {
-    return this.afAuth.auth.signInWithEmailAndPassword(email, password).then(credential => {
-      this.currentFbUserSubject.next(credential.user);
-      const status = 'online';
-      this.setUserStatus(status);
-      this.router.navigate(['chat']);
+    this.loginStatusSubject.next('loggingIn');
+    return this.afAuth.auth.signInWithEmailAndPassword(email, password).catch(error => {
+      this.loginStatusSubject.next('loggedOut');
+      return Promise.reject(error);
     });
   }
 
@@ -94,65 +85,61 @@ export class AuthService {
   }
 
   signUp(email: string, password: string, displayName: string) {
-    return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-      .then((credential) => {
-        this.authState = credential.user;
-        const status = 'online';
-        this.setUserData(email, displayName, status);
-      });
+    return this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(credential => {
+      return this.setUserData(credential.user.uid, email, displayName, status);
+    });
   }
 
-  signInWithGoogle(): Promise<void> {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    return this.afAuth.auth.signInWithPopup(provider)
-      .then((credential) => {
-        this.authState = credential.user;
-        const status = 'online';
-        return this.uploadGoogleUrl(credential.user.photoURL).then(() => {
-          this.setUserData(credential.user.email, credential.user.displayName, status);
+  signInWithGoogle(): Promise<any> {
+    this.loginStatusSubject.next('loggingIn');
+    const provider = new auth.GoogleAuthProvider();
+    return this.afAuth.auth.signInWithRedirect(provider).catch(error => {
+      this.loginStatusSubject.next('loggedOut');
+      return Promise.reject(error);
+    });
+  }
+
+  setGoogleAttributes(user: firebase.User): Promise<any> {
+    const isGoogleUser = user && user.photoURL && user.displayName;
+    if (isGoogleUser) {
+      return this.httpClient.get(user.photoURL, { responseType: 'blob'}).toPromise().then(response => {
+        const blob = new Blob([response]);
+        const path = `profile_images/${user.uid}`;
+        this.ref = this.storage.ref(path);
+        return this.ref.put(blob).then(() => {
+          return this.setUserData(user.uid, user.email, user.displayName, 'online');
         });
       });
-  }
-
-  uploadGoogleUrl(imageUrl: string): Promise<any> {
-    return this.httpClient.get(imageUrl, { responseType: 'blob'}).toPromise().then(response => {
-      const blob = new Blob([response]);
-      const path = `profile_images/${this.currentUserId}`;
-      this.ref = this.storage.ref(path);
-      return this.ref.put(blob);
-    });
+    }
+    return Promise.resolve();
   }
 
   sendPasswordResetEmail(email: string): Promise<void> {
     return this.afAuth.auth.sendPasswordResetEmail(email);
   }
 
-  setUserData(email: string, displayName: string, status: string, imageUrl = '') {
-    const path = `users/${this.currentUserId}`;
+  setUserData(uid: string, email: string, displayName: string, status: string): Promise<any> {
+    const path = `users/${uid}`;
     const data = {
-      uid: this.currentUserId,
+      uid,
       email,
       displayName,
       status,
-      imageUrl,
     };
 
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
+    return this.db.object(path).update(data);
   }
 
-  setUserStatus(status: string) {
-    const path = `users/${this.currentFbUserSubject.value.uid}`;
+  setUserStatus(status: string): Promise<void> {
+    const path = `users/${this.uid}`;
     const data = {
       status,
     };
-
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
+    return this.db.object(path).update(data);
   }
 
   setUserSettings(themeClass: string, displayName: string, status: string, mood: string) {
-    const path = `users/${this.currentFbUserSubject.value.uid}`;
+    const path = `users/${this.uid}`;
     if (!mood) {
       mood = '';
     }
@@ -168,7 +155,7 @@ export class AuthService {
   }
 
   setUserTheme(themeClass: string) {
-    const path = `users/${this.currentFbUserSubject.value.uid}`;
+    const path = `users/${this.uid}`;
     const data = {
       themeClass,
     };
@@ -179,7 +166,7 @@ export class AuthService {
 
   setUserTyping(isTyping: boolean): void {
     const lastActive = new Date().toUTCString();
-    const path = `users/${this.currentFbUserSubject.value.uid}`;
+    const path = `users/${this.uid}`;
     const data = {
       lastActive,
       lastMessageActivity: isTyping ? lastActive : '',

@@ -22,22 +22,16 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private auth: AuthService,
+    public auth: AuthService,
     private ngZone: NgZone,
     private router: Router,
     private dialog: MatDialog) { }
 
   ngOnInit() {
-    if (this.auth.authenticated) {
-      this.router.navigate(['chat']);
-    }
   }
 
   login(): void {
     this.auth.login(this.email, this.password)
-    .then(() => {
-      this.router.navigate(['chat']);
-    })
     .catch(error => {
       this.dialog.open(ErrorDialogComponent, {
         data: {
@@ -62,13 +56,9 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
   signInWithGoogle(): void {
     this.auth.signInWithGoogle()
-    .then(() => {
-      this.ngZone.run(() => {
-        this.router.navigate(['chat']);
-      });
-    })
     .catch(error => {
       this.ngZone.run(e => {
+        console.log('error signing in with google', e);
         this.dialog.open(ErrorDialogComponent, {
           data: {
             message: e,

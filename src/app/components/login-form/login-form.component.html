@@ -1,46 +1,53 @@
-<div fxFlexFill fxLayoutAlign="center center">
+<div fxFlexFill fxLayoutAlign="center center" *ngIf="(auth.loginStatus$ | async) === 'loggedOut'; else loggingIn">
 
-    <form #loginForm="ngForm">
+  <form #loginForm="ngForm">
 
-      <mat-card class="sign-up__form">
-        <mat-card-header>
-          <span class="mat-headline">Login</span>
-        </mat-card-header>
-        <mat-card-content>
+    <mat-card class="sign-up__form">
+      <mat-card-header>
+        <span class="mat-headline">Login</span>
+      </mat-card-header>
+      <mat-card-content>
 
-          <p>
-            <mat-form-field class="sign-up__field">
-              <input matInput #emailInput placeholder="Email" type="email" [(ngModel)]="email" name="email" required />
-            </mat-form-field>
-          </p>
+        <p>
+          <mat-form-field class="sign-up__field">
+            <input matInput #emailInput placeholder="Email" type="email" [(ngModel)]="email" name="email" required />
+          </mat-form-field>
+        </p>
 
-          <p>
-            <mat-form-field class="sign-up__field">
-              <input matInput placeholder="Password" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" required />
-              <button mat-icon-button matSuffix *ngIf="!showPassword" (click)="showPassword = !showPassword">
-                <mat-icon>visibility</mat-icon>
-              </button>
-              <button mat-icon-button matSuffix *ngIf="showPassword" (click)="showPassword = !showPassword">
-                <mat-icon>visibility_off</mat-icon>
-              </button>
-            </mat-form-field>
-          </p>
-
-          <div fxLayoutAlign="center center">
-            <button mat-raised-button class="login__google" (click)="signInWithGoogle()">
-              <mat-icon svgIcon="google-search" style="margin-right: 8px;"></mat-icon>
-              <span>Sign in with Google</span>
+        <p>
+          <mat-form-field class="sign-up__field">
+            <input matInput placeholder="Password" [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" required />
+            <button mat-icon-button matSuffix *ngIf="!showPassword" (click)="showPassword = !showPassword">
+              <mat-icon>visibility</mat-icon>
             </button>
-          </div>
+            <button mat-icon-button matSuffix *ngIf="showPassword" (click)="showPassword = !showPassword">
+              <mat-icon>visibility_off</mat-icon>
+            </button>
+          </mat-form-field>
+        </p>
 
-        </mat-card-content>
-        <mat-card-actions align="end">
-          <button mat-button (click)="forgotPassword()">Forgot Password?</button>
-          <button [disabled]="!loginForm.form.valid" mat-raised-button color="primary"
-            (click)="login()">Login</button>
-        </mat-card-actions>
-      </mat-card>
+        <div fxLayoutAlign="center center">
+          <button mat-raised-button class="login__google" (click)="signInWithGoogle()">
+            <mat-icon svgIcon="google-search" style="margin-right: 8px;"></mat-icon>
+            <span>Sign in with Google</span>
+          </button>
+        </div>
 
-    </form>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button (click)="forgotPassword()">Forgot Password?</button>
+        <button [disabled]="!loginForm.form.valid" mat-raised-button color="primary"
+          (click)="login()">Login</button>
+      </mat-card-actions>
+    </mat-card>
 
+  </form>
+
+</div>
+
+<ng-template #loggingIn>
+  <div fxFlexFill fxLayoutAlign="center center">
+    <mat-spinner></mat-spinner>
   </div>
+</ng-template>
+

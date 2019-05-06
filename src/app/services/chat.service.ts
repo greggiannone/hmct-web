@@ -41,23 +41,17 @@ export class ChatService {
       return Promise.reject('Message cannot be empty');
     }
 
-    if (!this.auth.currentFbUser) {
-      return Promise.reject('You are not authenticated');
-    }
-
-    if (this.auth.currentFbUser) {
-      this.chatMessages = this.getMessagesInternal$();
-      return this.chatMessages.push({
-        message,
-        uid: this.auth.currentFbUser.uid,
-        timestamp: new Date().toUTCString(),
-        username: this.extendedUser.displayName,
-      });
-    }
+    this.chatMessages = this.getMessagesInternal$();
+    return this.chatMessages.push({
+      message,
+      uid: this.auth.currentUid,
+      timestamp: new Date().toUTCString(),
+      username: this.extendedUser.displayName,
+    });
   }
 
   private getMessagesInternal$(): AngularFireList<ChatMessage> {
-    return this.db.list<ChatMessage>('messages', ref => ref.limitToLast(100));
+    return this.db.list<ChatMessage>('messages', ref => ref.limitToLast(50));
   }
 
   getMessages$(): Observable<ChatMessage[]> {

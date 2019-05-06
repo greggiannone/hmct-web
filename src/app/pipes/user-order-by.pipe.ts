@@ -26,7 +26,7 @@ export class UserOrderByPipe implements PipeTransform {
   }
 
   private getValue(user: User): number {
-    if (user.uid === this.auth.currentFbUser.uid) {
+    if (user.uid === this.auth.currentUid) {
       return -1;
     }
     if (user.status === 'online') {

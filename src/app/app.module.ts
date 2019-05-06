@@ -5,7 +5,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { MatCheckboxModule, MatButtonModule, MatCardModule, MatToolbarModule, MatIconModule, MatInputModule,
-  MatDialogModule, MatListModule, MatTooltipModule, MatMenuModule, MatSelectModule, MatSidenavModule } from '@angular/material';
+  MatDialogModule, MatListModule, MatTooltipModule, MatMenuModule, MatSelectModule, MatSidenavModule,
+  MatProgressSpinnerModule } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ChatRoomComponent } from './components/chat-room/chat-room.component';
 import { ChatFormComponent } from './components/chat-form/chat-form.component';
@@ -65,6 +66,7 @@ import { HttpClientModule } from '@angular/common/http';
     MatToolbarModule,
     MatInputModule,
     MatDialogModule,
+    MatProgressSpinnerModule,
     MatTooltipModule,
     MatSelectModule,
     MatMenuModule,

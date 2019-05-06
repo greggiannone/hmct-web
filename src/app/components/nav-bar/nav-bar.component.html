@@ -4,13 +4,13 @@
   </button>
   <span>HMCT Web</span>
   <span class="nav-bar__spacer"></span>
-  <button *ngIf="!(auth.isAuthenticated$ | async)" mat-button [routerLink]="['login']">
+  <button *ngIf="!(auth.currentFirebaseUser$ | async)" mat-button [routerLink]="['login']">
     Login
   </button>
-  <button *ngIf="!(auth.isAuthenticated$ | async)" mat-button [routerLink]="['register']">
+  <button *ngIf="!(auth.currentFirebaseUser$ | async)" mat-button [routerLink]="['register']">
     Sign Up
   </button>
-  <button mat-icon-button *ngIf="auth.isAuthenticated$ | async" [matMenuTriggerFor]="menu">
+  <button mat-icon-button *ngIf="auth.currentFirebaseUser$ | async" [matMenuTriggerFor]="menu">
       <mat-icon>more_vert</mat-icon>
     </button>
   <mat-menu #menu="matMenu">
