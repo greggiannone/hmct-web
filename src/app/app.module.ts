@@ -21,7 +21,7 @@ import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { environment } from 'src/environments/environment';
 import { LoginFormComponent } from './components/login-form/login-form.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
@@ -34,6 +34,7 @@ import { UserOrderByPipe } from './pipes/user-order-by.pipe';
 import { AngularFireStorageModule } from 'angularfire2/storage';
 import { UserImageComponent } from './components/user-image/user-image.component';
 import { FireImageComponent } from './components/fire-image/fire-image.component';
+import { ForgotPasswordDialogComponent } from './components/forgot-password-dialog/forgot-password-dialog.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { FireImageComponent } from './components/fire-image/fire-image.component
     UserOrderByPipe,
     UserImageComponent,
     FireImageComponent,
+    ForgotPasswordDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,6 +69,7 @@ import { FireImageComponent } from './components/fire-image/fire-image.component
     MatSidenavModule,
     MatListModule,
     MatButtonModule,
+    ReactiveFormsModule,
     MatIconModule,
     AngularFireModule,
     FlexLayoutModule,
@@ -86,6 +89,7 @@ import { FireImageComponent } from './components/fire-image/fire-image.component
   bootstrap: [AppComponent],
   entryComponents: [
     ErrorDialogComponent,
+    ForgotPasswordDialogComponent,
   ]
 })
 export class AppModule { }

@@ -95,6 +95,10 @@ export class AuthService {
       });
   }
 
+  sendPasswordResetEmail(email: string): Promise<void> {
+    return this.afAuth.auth.sendPasswordResetEmail(email);
+  }
+
   setUserData(email: string, displayName: string, status: string) {
     const path = `users/${this.currentUserId}`;
     const data = {

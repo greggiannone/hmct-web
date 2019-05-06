@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
+import { ForgotPasswordDialogComponent } from '../forgot-password-dialog/forgot-password-dialog.component';
 
 @Component({
   selector: 'hmct-login-form',
@@ -11,12 +12,13 @@ import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
   styleUrls: ['./login-form.component.scss']
 })
 export class LoginFormComponent implements OnInit, AfterViewInit {
- 
+
 
   @ViewChild('emailInput') emailInput: ElementRef;
 
   email: string;
   password: string;
+  showPassword = false;
 
   constructor(
     private afAuth: AngularFireAuth,
@@ -51,6 +53,10 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
         this.emailInput.nativeElement.focus();
       });
     }
+  }
+
+  forgotPassword(): void {
+    this.dialog.open(ForgotPasswordDialogComponent);
   }
 
 }
