@@ -54,7 +54,7 @@ export class SettingsComponent {
   upload(file: File): void {
     const path = `profile_images/${this.uid}`;
     this.ref = this.storage.ref(path);
-    this.task = this.ref.put(file);
+    this.task = this.ref.put(file, { cacheControl: 'max-age=2628000'});
     this.uploadProgress$ = this.task.percentageChanges();
     this.task.then(() => {
       if (this.userImage) {

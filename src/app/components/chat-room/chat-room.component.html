@@ -11,6 +11,14 @@
           <hmct-feed></hmct-feed>
         </div>
 
+        <div  class="chat-room__typing-users">
+          <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="start center" *ngIf="(typingUsers$ | async)?.length > 0">
+            <div @listAnimation *ngFor="let typingUser of typingUsers$ | async; trackBy:trackElement">
+              <hmct-user-image class="chat-room__typing-user" [small]="true" [uid]="typingUser.uid" [matTooltip]="typingUser.displayName"></hmct-user-image>
+            </div>
+          </div>
+        </div>
+
         <hmct-chat-form class="chat-room__chat-form" (messageSent)="onMessageSent()"></hmct-chat-form>
 
       </div>

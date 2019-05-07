@@ -5,11 +5,14 @@ import { MatSidenav } from '@angular/material';
 import { AuthService } from '../../services/auth.service';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/user.model';
+import { map } from 'rxjs/operators';
+import { listAnimation } from './chat-room.animation';
 
 @Component({
   selector: 'hmct-chat-room',
   templateUrl: './chat-room.component.html',
-  styleUrls: ['./chat-room.component.scss']
+  styleUrls: ['./chat-room.component.scss'],
+  animations: [listAnimation],
 })
 export class ChatRoomComponent implements OnInit {
 
@@ -17,13 +20,18 @@ export class ChatRoomComponent implements OnInit {
   title = document.title;
 
   users$: Observable<User[]>;
+  typingUsers$: Observable<User[]>;
 
   @ViewChild('feedScroll') feedScroll: ElementRef;
   @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-  constructor(private chat: ChatService, public screen: ScreenService, public auth: AuthService) {
+  constructor(public chat: ChatService, public screen: ScreenService, public auth: AuthService) {
 
     this.users$ = chat.getUsers$();
+
+    this.typingUsers$ = this.users$.pipe(map(users => {
+      return users.filter(u => !!u.lastMessageActivity && u.uid !== this.auth.currentUid);
+    }));
 
     this.chat.getMessages$().subscribe(messages => {
       // First time that the page loads, transport to the bottom as fast as possible
@@ -64,6 +72,10 @@ export class ChatRoomComponent implements OnInit {
     setTimeout(() => {
       this.initialScrollToBottom(--retryCount);
     }, 500);
+  }
+
+  trackElement(index: number, element: User): string {
+    return element ? element.$key : '';
   }
 
   scrollToBottom(retryCount: number): void {

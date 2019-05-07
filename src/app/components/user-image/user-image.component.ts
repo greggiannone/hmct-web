@@ -13,6 +13,7 @@ export class UserImageComponent implements OnInit, OnChanges {
   private defaultImage = 'assets/default-user.jpg';
 
   @Input() uid = '';
+  @Input() small = false;
 
   private imageUrlSubject = new BehaviorSubject<string>(this.defaultImage);
 

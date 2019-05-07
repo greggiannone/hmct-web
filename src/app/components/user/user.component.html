@@ -1,14 +1,15 @@
-<div [class.user--offline]="user.status === 'offline'" [matTooltip]="user.lastActive | date : 'medium'">
+<div [class.user--offline]="!user.isOnline || user.status === 'offline'" [matTooltip]="user.lastActive | date : 'medium'">
   <mat-card class="user">
     <mat-card-content>
       <div fxLayout="row" fxLayoutAlign="start center">
-        <div class="user__status mat-elevation-z1" [class.user__status--online]="user.status === 'online'"
-          [class.user__status--busy]="user.status === 'busy'"></div>
+        <div class="user__status mat-elevation-z1"
+          [class.user__status--inactive]="!user.isActive && user.status !== 'offline' && user.isOnline"
+          [class.user__status--available]="user.status === 'available' && user.isOnline"
+          [class.user__status--busy]="user.status === 'busy' && user.isOnline"></div>
         <hmct-user-image class="user__image" [uid]="user.uid"></hmct-user-image>
         <div>
           <div class="mat-body-strong">{{ user.displayName }}</div>
           <div *ngIf="user.mood" class="user__mood mat-caption">{{ user.mood }}</div>
-          <div *ngIf="user.lastMessageActivity" class="user__typing mat-caption" [matTooltip]="user.lastMessageActivity | date : 'medium'">Typing...</div>
         </div>
       </div>
     </mat-card-content>

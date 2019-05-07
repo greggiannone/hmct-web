@@ -15,6 +15,7 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
 
 
   @ViewChild('emailInput') emailInput: ElementRef;
+  isLoggingIn = false;
 
   email: string;
   password: string;
@@ -28,17 +29,27 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
     private dialog: MatDialog) { }
 
   ngOnInit() {
+    this.afAuth.user.subscribe(user => {
+      if (user) {
+        this.router.navigate(['chat']);
+      }
+    });
   }
 
   login(): void {
+    this.isLoggingIn = true;
     this.auth.login(this.email, this.password)
-    .catch(error => {
-      this.dialog.open(ErrorDialogComponent, {
-        data: {
-          message: error,
-        }
+      .then(() => {
+        this.router.navigate(['chat']);
+      })
+      .catch(error => {
+        this.isLoggingIn = false;
+        this.dialog.open(ErrorDialogComponent, {
+          data: {
+            message: error,
+          }
+        });
       });
-    });
   }
 
   ngAfterViewInit(): void {
@@ -55,17 +66,19 @@ export class LoginFormComponent implements OnInit, AfterViewInit {
   }
 
   signInWithGoogle(): void {
+    this.isLoggingIn = true;
     this.auth.signInWithGoogle()
-    .catch(error => {
-      this.ngZone.run(e => {
-        console.log('error signing in with google', e);
-        this.dialog.open(ErrorDialogComponent, {
-          data: {
-            message: e,
-          }
+      .catch(error => {
+        this.isLoggingIn = false;
+        this.ngZone.run(e => {
+          console.log('error signing in with google', e);
+          this.dialog.open(ErrorDialogComponent, {
+            data: {
+              message: e,
+            }
+          });
         });
       });
-    });
   }
 
 }

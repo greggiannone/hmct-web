@@ -3,17 +3,22 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from
 import { AuthService } from 'src/app/services/auth.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private fbAuth: AngularFireAuth, private router: Router) {}
 
 
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | boolean {
-      return this.auth.loginStatus$.pipe(map(status => {
-        return status === 'loggedIn';
+      return this.fbAuth.user.pipe(map(user => {
+        const isAuthenticated = !!user;
+        if (!isAuthenticated) {
+          this.router.navigate(['login']);
+        }
+        return isAuthenticated;
       }));
   }
 }

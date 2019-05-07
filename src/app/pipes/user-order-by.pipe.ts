@@ -20,7 +20,12 @@ export class UserOrderByPipe implements PipeTransform {
   private sort(values: User[]): any[] {
 
     const array: any[] = values.sort((a: User, b: User): number => {
-      return this.getValue(a) > this.getValue(b) ? 1 : -1;
+      const aValue = this.getValue(a);
+      const bValue = this.getValue(b);
+      if (aValue === bValue) {
+        return a.displayName.localeCompare(b.displayName);
+      }
+      return aValue > bValue ? 1 : -1;
     });
     return array;
   }
@@ -29,13 +34,10 @@ export class UserOrderByPipe implements PipeTransform {
     if (user.uid === this.auth.currentUid) {
       return -1;
     }
-    if (user.status === 'online') {
+    if (user.isOnline || user.status === 'offline') {
       return 0;
     }
-    if (user.status === 'busy') {
-      return 1;
-    }
-    return 2;
+    return 1;
   }
 
 }

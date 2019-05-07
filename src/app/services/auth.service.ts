@@ -3,11 +3,11 @@ import { AngularFireDatabase } from 'angularfire2/database';
 import { Observable, BehaviorSubject, of } from 'rxjs';
 import { map, flatMap } from 'rxjs/operators';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { Router } from '@angular/router';
 import { User } from '../models/user.model';
 import { AngularFireStorageReference, AngularFireStorage } from 'angularfire2/storage';
 import { HttpClient } from '@angular/common/http';
 import { auth } from 'firebase/app';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -21,21 +21,15 @@ export class AuthService {
   }
 
   private ref: AngularFireStorageReference;
-  private loginStatusSubject = new BehaviorSubject<'loggedOut' | 'loggingIn' | 'loggedIn'>('loggedOut');
-
-  get loginStatus$(): Observable<'loggedOut' | 'loggingIn' | 'loggedIn'> {
-    return this.loginStatusSubject.asObservable();
-  }
-
   currentUser$: Observable<User>;
   currentFirebaseUser$: Observable<firebase.User>;
 
   constructor(
     private afAuth: AngularFireAuth,
     private db: AngularFireDatabase,
+    private router: Router,
     private storage: AngularFireStorage,
-    private httpClient: HttpClient,
-    private router: Router) {
+    private httpClient: HttpClient) {
 
     this.currentUser$ = afAuth.user.pipe(flatMap(fbUser => {
       if (fbUser) {
@@ -58,45 +52,34 @@ export class AuthService {
     this.currentFirebaseUser$.subscribe(fbUser => {
       if (fbUser) {
         this.uid = fbUser.uid;
-        const status = 'online';
-        this.setUserStatus(status).then(() => {
-          this.loginStatusSubject.next('loggedIn');
-          this.router.navigate(['chat']);
-        });
+        this.setIsOnline(true);
       } else {
         this.uid = '';
-        this.loginStatusSubject.next('loggedOut');
-        this.router.navigate(['login']);
       }
     });
   }
 
   login(email: string, password: string): Promise<any> {
-    this.loginStatusSubject.next('loggingIn');
-    return this.afAuth.auth.signInWithEmailAndPassword(email, password).catch(error => {
-      this.loginStatusSubject.next('loggedOut');
-      return Promise.reject(error);
-    });
+    return this.afAuth.auth.signInWithEmailAndPassword(email, password);
   }
 
-  logout(): Promise<void> {
-    this.setUserStatus('offline');
-    return this.afAuth.auth.signOut();
+  logout(): Promise<any> {
+    return this.setIsOnline(false).then(() => {
+      this.afAuth.auth.signOut().then(() => {
+        this.router.navigate(['login']);
+      });
+    });
   }
 
   signUp(email: string, password: string, displayName: string) {
     return this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(credential => {
-      return this.setUserData(credential.user.uid, email, displayName, status);
+      return this.setUserData(credential.user.uid, email, displayName, 'available');
     });
   }
 
   signInWithGoogle(): Promise<any> {
-    this.loginStatusSubject.next('loggingIn');
     const provider = new auth.GoogleAuthProvider();
-    return this.afAuth.auth.signInWithRedirect(provider).catch(error => {
-      this.loginStatusSubject.next('loggedOut');
-      return Promise.reject(error);
-    });
+    return this.afAuth.auth.signInWithRedirect(provider);
   }
 
   setGoogleAttributes(user: firebase.User): Promise<any> {
@@ -107,7 +90,7 @@ export class AuthService {
         const path = `profile_images/${user.uid}`;
         this.ref = this.storage.ref(path);
         return this.ref.put(blob).then(() => {
-          return this.setUserData(user.uid, user.email, user.displayName, 'online');
+          return this.setUserData(user.uid, user.email, user.displayName, 'available');
         });
       });
     }
@@ -130,15 +113,15 @@ export class AuthService {
     return this.db.object(path).update(data);
   }
 
-  setUserStatus(status: string): Promise<void> {
+  setIsOnline(isOnline: boolean): Promise<void> {
     const path = `users/${this.uid}`;
     const data = {
-      status,
+      isOnline,
     };
     return this.db.object(path).update(data);
   }
 
-  setUserSettings(themeClass: string, displayName: string, status: string, mood: string) {
+  setUserSettings(themeClass: string, displayName: string, status: string, mood: string): Promise<void> {
     const path = `users/${this.uid}`;
     if (!mood) {
       mood = '';
@@ -149,31 +132,27 @@ export class AuthService {
       status,
       mood,
     };
-
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
+    return this.db.object(path).update(data);
   }
 
-  setUserTheme(themeClass: string) {
+  setUserTheme(themeClass: string): Promise<void> {
     const path = `users/${this.uid}`;
     const data = {
       themeClass,
     };
-
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
+    return this.db.object(path).update(data);
   }
 
-  setUserTyping(isTyping: boolean): void {
-    const lastActive = new Date().toUTCString();
-    const path = `users/${this.uid}`;
-    const data = {
-      lastActive,
-      lastMessageActivity: isTyping ? lastActive : '',
-    };
-
-    this.db.object(path).update(data)
-      .catch(error => console.log(error));
+  setUserTyping(isTyping: boolean): Promise<void> {
+    if (this.uid) {
+      const lastActive = new Date().toUTCString();
+      const path = `users/${this.uid}`;
+      const data = {
+        lastActive,
+        lastMessageActivity: isTyping ? lastActive : '',
+      };
+      return this.db.object(path).update(data);
+    }
   }
 
 }

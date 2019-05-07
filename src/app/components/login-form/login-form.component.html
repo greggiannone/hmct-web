@@ -1,4 +1,4 @@
-<div fxFlexFill fxLayoutAlign="center center" *ngIf="(auth.loginStatus$ | async) === 'loggedOut'; else loggingIn">
+<div fxFlexFill fxLayoutAlign="center center" *ngIf="!isLoggingIn; else loggingIn">
 
   <form #loginForm="ngForm">
 

@@ -14,12 +14,16 @@
     background-color: mat-color($background, disabled-button);
   }
 
-  .user__status--online {
+  .user__status--available {
     background-color: lawngreen;
   }
 
   .user__status--busy {
-    background-color: mat-color($warn);
+    background-color: red;
+  }
+
+  .user__status-inactive {
+    background-color: orange;
   }
 
   .user__typing {
