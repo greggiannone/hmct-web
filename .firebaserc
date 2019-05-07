@@ -1,5 +1,6 @@
 {
   "projects": {
+    "default": "hmct-web-prod",
     "hmct-web-prod": "hmct-web-prod",
     "hmct-web-dev": "hmct-1f8e5"
   }

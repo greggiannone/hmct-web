@@ -12,7 +12,10 @@ const ACTIVITY_TIMEOUT = (60 * 1000) * 15 // 15 minutes
 // users to 'offline' if they are inactive for more than 8 hours.
 //const LOGIN_TIMEOUT = ((60 * 1000) * 60) * 8 // 8 Hours. 
 
-exports.updateUserStatusDBTrigger = functions.database.instance('hmct-1f8e5').ref('/users/{pathId}').onWrite(checkUserActivity);
+// The 2 values could be:
+// - hmct-web-prod
+// - hmct-1f8e5
+exports.updateUserStatusDBTrigger = functions.database.instance('hmct-web-prod').ref('/users/{pathId}').onWrite(checkUserActivity);
 //exports.updateUserStatusTimerTrigger = functions.pubsub.schedule('every minute').onRun(checkUserActivity);
 
 async function checkUserActivity(change){
@@ -27,7 +30,7 @@ async function checkUserActivity(change){
     snapshot.forEach(child => {
         //Make sure this value exists, otherwise we know the user is ancient.
         if(child.val().lastActive){
-            var lastActiveDate = new Date(child.val().lastActive).valueOf();
+            const lastActiveDate = new Date(child.val().lastActive).valueOf();
             if(lastActiveDate < activeUserCutoff){
                 updates[child.key+"/isActive"] = false;
               }
